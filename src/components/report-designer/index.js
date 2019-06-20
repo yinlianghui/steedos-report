@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import 'whatwg-fetch';
+import fetch from 'cross-fetch';
 
 
 class ReportDesigner extends Component {

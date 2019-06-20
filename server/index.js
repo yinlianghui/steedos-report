@@ -10,7 +10,7 @@ const port = 3200;
 // });
 app.use(requestHandler);
 
-app.use('/', express.static(path.resolve('build')))
+app.use('/', express.static(path.resolve('build')));
 
 app.listen(port, function (error) {
     if (error) {

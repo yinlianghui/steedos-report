@@ -5,7 +5,7 @@ import App from "../src/App";
 import buildPath from '../build/asset-manifest.json';
 
 function handleRender(req, res, next) {
-    if (req.url.startsWith('/static/')) {
+    if (req.url.startsWith('/static/') || req.url.startsWith('/assets/')) {
         return next()
     }
     const context = {};
@@ -26,8 +26,14 @@ function handleRender(req, res, next) {
                     <meta charset="utf-8">
                     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
                     <meta name="theme-color" content="#000000">
-                    <title>StartRoute</title>
+                    <title>Steedos Report</title>
                     <link rel="stylesheet" type="text/css" href="${buildPath.files["main.css"]}">
+                    <link href="/assets/stimulsoft-report/css/stimulsoft.viewer.office2013.whiteblue.css" rel="stylesheet">
+                    <link href="/assets/stimulsoft-report/css/stimulsoft.designer.office2013.whiteblue.css" rel="stylesheet">
+                    <script src="/assets/stimulsoft-report/js/stimulsoft.reports.js" type="text/javascript"></script>
+                    <script src="/assets/stimulsoft-report/js/stimulsoft.dashboards.js" type="text/javascript"></script>
+                    <script src="/assets/stimulsoft-report/js/stimulsoft.viewer.js" type="text/javascript"></script>
+                    <script src="/assets/stimulsoft-report/js/stimulsoft.designer.js" type="text/javascript"></script>
                 </head>
                 <body>
                     <noscript>
