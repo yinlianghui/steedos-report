@@ -1,12 +1,25 @@
 import React, { Component } from 'react';
-import fetch from 'cross-fetch';
 import './index.css';
+import loadData from '../../helpers/load-data';
+
 class ReportList extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            list: []
-        };
+        let reports = props.staticContext && props.staticContext.data;
+        if (reports) {
+            // 服务端由后台context传入data数据
+            let list = [];
+            for (let key in reports) {
+                list.push(reports[key]);
+            }
+            this.state = {
+                list: list
+            };
+        } else {
+            this.state = {
+                list: []
+            };
+        }
     }
 
     render() {
@@ -27,12 +40,8 @@ class ReportList extends Component {
     }          
 
     async componentDidMount(){
-        let response = await fetch(`/api/report/list`, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        let reports = await response.json();
+        // 客户端需要主动请求数据
+        let reports = await loadData('list');
         let list = [];
         for (let key in reports){
             list.push(reports[key]);
