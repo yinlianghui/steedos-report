@@ -10,16 +10,18 @@ export default async (req, res, next) => {
     if (req.url.startsWith('/static/') || req.url.startsWith('/assets/') || req.url.startsWith('/favicon.ico')) {
         return next()
     }
-    
-    const matchingRoutes = matchRoutes(routes, req.url);
-    let promises = [];
-    matchingRoutes.forEach(route => {
-        route = route.route;
-        if (route.loadData) {
-            promises.push(route.loadData());
-        }
-    });
-    let data = await Promise.all(promises).then();
+
+    const loadBranchData = async (location) => {
+        const branch = matchRoutes(routes, location);
+        const promises = branch.map(({ route, match }) => {
+            return route.loadData
+                ? route.loadData(match)
+                : Promise.resolve(null);
+        });
+        return await Promise.all(promises).then();
+    }
+    // useful on the server for preloading data
+    let data = await loadBranchData(req.url);
 
     const context = { data };
     const frontComponents = renderToString(
