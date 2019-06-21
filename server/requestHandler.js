@@ -14,6 +14,9 @@ function handleRender(req, res, next) {
             <App />
         </StaticRouter>
     );
+    if (context.status === 404) {
+        res.status(404);
+    }
     if (context.url) {
         res.writeHead(301, {
             Location: context.url
