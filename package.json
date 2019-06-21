@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@babel/register": "^7.4.4",
+    "@steedos/stimulsoft-report": "^0.0.1",
     "cross-fetch": "^3.0.4",
     "css-modules-require-hook": "^4.2.3",
     "http": "^0.0.0",

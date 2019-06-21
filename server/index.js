@@ -12,6 +12,12 @@ app.use(requestHandler);
 
 app.use('/', express.static(path.resolve('build')));
 
+let stimulsoftAssets = path.join(path.dirname(require.resolve("@steedos/stimulsoft-report")), "assets");
+
+app
+    .disable('x-powered-by')
+    .use('/assets/stimulsoft-report/', express.static(stimulsoftAssets));
+
 app.listen(port, function (error) {
     if (error) {
         console.error(error)
