@@ -4,21 +4,20 @@ import { StaticRouter, matchPath } from 'react-router';
 import App from "../src/App";
 import buildPath from '../build/asset-manifest.json';
 import routes from '../src/routes';
+import { matchRoutes } from 'react-router-config';
 
 export default async (req, res, next) => {
     if (req.url.startsWith('/static/') || req.url.startsWith('/assets/') || req.url.startsWith('/favicon.ico')) {
         return next()
     }
-
-    const promises = [];
-    // use `some` to imitate `<Switch>` behavior of selecting only
-    // the first to match
-    routes.some(route => {
-        const match = matchPath(req.url, route);
-        if (match && route.loadData){
+    
+    const matchingRoutes = matchRoutes(routes, req.url);
+    let promises = [];
+    matchingRoutes.forEach(route => {
+        route = route.route;
+        if (route.loadData) {
             promises.push(route.loadData());
         }
-        return match;
     });
     let data = await Promise.all(promises).then();
 
