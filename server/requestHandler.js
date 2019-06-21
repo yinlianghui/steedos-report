@@ -3,21 +3,24 @@ import { renderToString } from 'react-dom/server';
 import { StaticRouter, matchPath } from 'react-router';
 import App from "../src/App";
 import buildPath from '../build/asset-manifest.json';
-import Routes from '../src/routes';
+import routes from '../src/routes';
 
 export default async (req, res, next) => {
-    if (req.url.startsWith('/static/') || req.url.startsWith('/assets/')) {
+    if (req.url.startsWith('/static/') || req.url.startsWith('/assets/') || req.url.startsWith('/favicon.ico')) {
         return next()
     }
 
-    const currentRoute = Routes.find(route => matchPath(req.url, route)) || {};
-    let promise;
-    if (currentRoute.loadData) {
-        promise = currentRoute.loadData();
-    } else {
-        promise = Promise.resolve(null);
-    }
-    let data = await promise.then();
+    const promises = [];
+    // use `some` to imitate `<Switch>` behavior of selecting only
+    // the first to match
+    routes.some(route => {
+        const match = matchPath(req.url, route);
+        if (match && route.loadData){
+            promises.push(route.loadData());
+        }
+        return match;
+    });
+    let data = await Promise.all(promises).then();
 
     const context = { data };
     const frontComponents = renderToString(

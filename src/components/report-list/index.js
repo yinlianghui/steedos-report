@@ -6,6 +6,7 @@ class ReportList extends Component {
     constructor(props) {
         super(props);
         let reports = props.staticContext && props.staticContext.data;
+        reports = reports && reports.length && reports[0];
         if (reports) {
             // 服务端由后台context传入data数据
             let list = [];
