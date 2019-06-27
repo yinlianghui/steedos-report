@@ -1,5 +1,6 @@
 const utils = require('./utils');
 const request = require('graphql-request').request;
+import packageJSON from '../package.json';
 
 let reporter = {
   async getReport(id) {
@@ -8,8 +9,11 @@ let reporter = {
     return report;
   },
   async getData(report) {
-    if (report.graphql){
-      let dataResult = await request("http://localhost:3200/graphql/default/", report.graphql);
+    if (report.graphql) {
+      let proxy = packageJSON.proxy ? packageJSON.proxy : "";
+      let url = `${proxy}/graphql/default`;
+      // let dataResult = await request("http://localhost:3200/graphql/default/", report.graphql);
+      let dataResult = await request(url, report.graphql);
       let items = dataResult[`${report.object_name}`];
       if (items && items.length) {
         let processChildren = (item, parentKey, object) => {

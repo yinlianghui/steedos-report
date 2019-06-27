@@ -65,13 +65,13 @@ export default async (req, res, next) => {
                         let designer = new window.Stimulsoft.Designer.StiDesigner(options, 'StiDesigner', false);
                         let report = new window.Stimulsoft.Report.StiReport();
                         let reportId = "contracts";
-                        report.loadFile("http://localhost:3200/api/report/mrt/" + reportId);
+                        report.loadFile("/api/report/mrt/" + reportId);
                         designer.report = report;
                         designer.renderHtml("report-designer");
                         designer.onSaveReport = async function (args) {
                             // 保存报表模板
                             let jsonReport = args.report.saveToJsonString();
-                            let response = await fetch("http://localhost:3200/api/report/mrt/" + reportId, {
+                            let response = await fetch("/api/report/mrt/" + reportId, {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json'
