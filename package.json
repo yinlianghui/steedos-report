@@ -4,16 +4,20 @@
   "private": true,
   "dependencies": {
     "@babel/register": "^7.4.4",
+    "@steedos/objectql": "^0.0.19",
     "@steedos/stimulsoft-report": "^0.0.1",
     "cross-fetch": "^3.0.4",
     "css-modules-require-hook": "^4.2.3",
+    "express-graphql": "^0.8.0",
+    "graphql-request": "^1.8.2",
     "http": "^0.0.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-router": "^5.0.1",
     "react-router-config": "^5.0.1",
     "react-router-dom": "^5.0.1",
-    "react-scripts": "3.0.1"
+    "react-scripts": "3.0.1",
+    "underscore": "^1.9.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -25,7 +29,7 @@
   "eslintConfig": {
     "extends": "react-app"
   },
-  "proxy": "http://localhost:3600",
+  "proxy": "http://localhost:3200",
   "browserslist": {
     "production": [
       ">0.2%",
