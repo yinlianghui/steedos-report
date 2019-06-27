@@ -11,8 +11,7 @@ export default async (req, res, next) => {
         return next()
     }
 
-    const loadBranchData = async (location) => {
-        const branch = matchRoutes(routes, location);
+    const loadBranchData = async (branch) => {
         const promises = branch.map(({ route, match }) => {
             return route.loadData
                 ? route.loadData(match)
@@ -21,7 +20,9 @@ export default async (req, res, next) => {
         return await Promise.all(promises).then();
     }
     // useful on the server for preloading data
-    let data = await loadBranchData(req.url);
+    const branch = matchRoutes(routes, req.url);
+    let data = await loadBranchData(branch);
+    console.log("branch=====", branch);
 
     const context = { data };
     const frontComponents = renderToString(
@@ -38,6 +39,52 @@ export default async (req, res, next) => {
         });
         res.end();
     } else {
+        const reportBranch = branch.find(({ route, match }) => {
+            return route.isReport;
+        });
+        let isReport = !!reportBranch;
+        let reportHeadTags = "";
+        let reportScriptTags = "";
+        console.log("req.url========", req.url)
+        if (isReport){
+            reportHeadTags = `
+                <link href="/assets/stimulsoft-report/css/stimulsoft.viewer.office2013.whiteblue.css" rel="stylesheet">
+                <link href="/assets/stimulsoft-report/css/stimulsoft.designer.office2013.whiteblue.css" rel="stylesheet">
+                <script src="/assets/stimulsoft-report/js/stimulsoft.reports.js" type="text/javascript"></script>
+                <script src="/assets/stimulsoft-report/js/stimulsoft.dashboards.js" type="text/javascript"></script>
+                <script src="/assets/stimulsoft-report/js/stimulsoft.viewer.js" type="text/javascript"></script>
+                <script src="/assets/stimulsoft-report/js/stimulsoft.designer.js" type="text/javascript"></script>
+            `;
+            reportScriptTags = `
+                <script type="text/javascript">
+                    let options = new window.Stimulsoft.Designer.StiDesignerOptions();
+                    options.appearance.fullScreenMode = false;
+                    let designer = new window.Stimulsoft.Designer.StiDesigner(options, 'StiDesigner', false);
+                    let report = new window.Stimulsoft.Report.StiReport();
+                    let reportId = "contracts";
+                    report.loadFile("/api/report/mrt/" + reportId);
+                    designer.report = report;
+                    designer.renderHtml("report-designer");
+                    designer.onSaveReport = async function (args) {
+                        // 保存报表模板
+                        let jsonReport = args.report.saveToJsonString();
+                        let response = await fetch("/api/report/mrt/" + reportId, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: jsonReport
+                        });
+                        if (!response.ok){
+                            window.Stimulsoft.System.StiError.showError("保存失败", true);
+                        }
+                    }
+                    if(!report.getDictionary().dataSources.count){
+                        window.Stimulsoft.System.StiError.showError("未找到报表", true);
+                    }
+                </script>
+            `;
+        }
         const frontHtml = `<!DOCTYPE html>
             <html lang="en">
                 <head>
@@ -46,12 +93,7 @@ export default async (req, res, next) => {
                     <meta name="theme-color" content="#000000">
                     <title>Steedos Report</title>
                     <link rel="stylesheet" type="text/css" href="${buildPath.files["main.css"]}">
-                    <link href="/assets/stimulsoft-report/css/stimulsoft.viewer.office2013.whiteblue.css" rel="stylesheet">
-                    <link href="/assets/stimulsoft-report/css/stimulsoft.designer.office2013.whiteblue.css" rel="stylesheet">
-                    <script src="/assets/stimulsoft-report/js/stimulsoft.reports.js" type="text/javascript"></script>
-                    <script src="/assets/stimulsoft-report/js/stimulsoft.dashboards.js" type="text/javascript"></script>
-                    <script src="/assets/stimulsoft-report/js/stimulsoft.viewer.js" type="text/javascript"></script>
-                    <script src="/assets/stimulsoft-report/js/stimulsoft.designer.js" type="text/javascript"></script>
+                    ${reportHeadTags}
                 </head>
                 <body>
                     <noscript>
@@ -59,33 +101,7 @@ export default async (req, res, next) => {
                     </noscript>
                     <div id="root">${frontComponents}</div>
                     <script src="${buildPath.files['main.js']}"></script>
-                    <script type="text/javascript">
-                        let options = new window.Stimulsoft.Designer.StiDesignerOptions();
-                        options.appearance.fullScreenMode = false;
-                        let designer = new window.Stimulsoft.Designer.StiDesigner(options, 'StiDesigner', false);
-                        let report = new window.Stimulsoft.Report.StiReport();
-                        let reportId = "contracts";
-                        report.loadFile("/api/report/mrt/" + reportId);
-                        designer.report = report;
-                        designer.renderHtml("report-designer");
-                        designer.onSaveReport = async function (args) {
-                            // 保存报表模板
-                            let jsonReport = args.report.saveToJsonString();
-                            let response = await fetch("/api/report/mrt/" + reportId, {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                },
-                                body: jsonReport
-                            });
-                            if (!response.ok){
-                                window.Stimulsoft.System.StiError.showError("保存失败", true);
-                            }
-                        }
-                        if(!report.getDictionary().dataSources.count){
-                            window.Stimulsoft.System.StiError.showError("未找到报表", true);
-                        }
-                    </script>
+                    ${reportScriptTags}
                 </body>
             </html>`
 

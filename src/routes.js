@@ -16,16 +16,19 @@ const Routes = [
         path: '/:id',
         exact: true,
         component: ReportViewer,
+        isReport: true
     },
     {
         path: '/designer/:id',
         exact: true,
         component: ReportDesigner,
+        isReport: true
     },
     {
         path: '/viewer/:id',
         exact: true,
         component: ReportViewer,
+        isReport: true
     },
     {
         component: NotFound
