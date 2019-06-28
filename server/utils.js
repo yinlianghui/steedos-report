@@ -116,7 +116,7 @@ const getDatabases = (report) => {
     }
     const rootUrl = process.env.REPORT_ROOT_URL;
     console.log("=======getDatabases========rootUrl=======", rootUrl);
-    let dataUrl = `${rootUrl}/api/report/data/${report._id}`;
+    let dataUrl = `${rootUrl}/data/${report._id}`;
     return {
         "0": {
             "Ident": "StiJsonDatabase",

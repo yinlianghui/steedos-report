@@ -39,7 +39,7 @@ import requestHandler from './requestHandler';
 const objectql = require("@steedos/objectql");
 
 const port = 3200;
-const rootUrl = "/report";
+const rootUrl = "/api-v2/report";
 process.env.PORT = port;
 process.env.REPORT_ROOT_URL = rootUrl;
 
@@ -71,7 +71,7 @@ _.each(objectql.getSteedosSchema().getDataSources(), function (datasource, name)
 app
     .disable('x-powered-by')
     .use(`${rootUrl}/assets/stimulsoft-report/`, express.static(stimulsoftAssets))
-    .use(`${rootUrl}/api/report`, ReportRouter.routes)
+    .use(`${rootUrl}`, ReportRouter.routes)
 
 app.use(rootUrl, requestHandler);
 

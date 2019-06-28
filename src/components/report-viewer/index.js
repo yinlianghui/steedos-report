@@ -9,7 +9,7 @@ class ReportViewer extends Component {
         let viewer = new window.Stimulsoft.Viewer.StiViewer(null, 'StiViewer', false);
         let report = new window.Stimulsoft.Report.StiReport();
         let reportId = this.props.match.params.id;
-        report.loadFile(`/api/report/mrt/${reportId}`);
+        report.loadFile(`/api-v2/report/mrt/${reportId}`);
         viewer.report = report;
         viewer.renderHtml("report-viewer");
         if (!report.getDictionary().dataSources.count) {
