@@ -38,6 +38,11 @@ import requestHandler from './requestHandler';
 // import objectql from '@steedos/objectql';
 const objectql = require("@steedos/objectql");
 
+const port = 3200;
+const rootUrl = "/report";
+process.env.PORT = port;
+process.env.REPORT_ROOT_URL = rootUrl;
+
 let stimulsoftAssets = path.join(path.dirname(require.resolve("@steedos/stimulsoft-report")), "assets");
 let objectsDir = path.resolve('./objects')
 let reportsDir = path.resolve('./reports')
@@ -65,15 +70,13 @@ _.each(objectql.getSteedosSchema().getDataSources(), function (datasource, name)
 
 app
     .disable('x-powered-by')
-    .use('/assets/stimulsoft-report/', express.static(stimulsoftAssets))
-    .use('/api/report', ReportRouter.routes)
+    .use(`${rootUrl}/assets/stimulsoft-report/`, express.static(stimulsoftAssets))
+    .use(`${rootUrl}/api/report`, ReportRouter.routes)
 
-app.use(requestHandler);
+app.use(rootUrl, requestHandler);
 
-app.use('/', express.static(path.resolve('build')));
+app.use(rootUrl, express.static(path.resolve('build')));
 
-const port = 3200;
-process.env.PORT = port;
 app.listen(process.env.PORT || 3000, function (error) {
     if (error) {
         console.error(error)

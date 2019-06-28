@@ -28,8 +28,8 @@ class ReportList extends Component {
         var items = list.map(function (item) {
             return (
                 <div className="report-list-item" key={item._id}>
-                    <a href={item._id}>{item.name}</a>
-                    <a href={"/designer/" + item._id}>编辑</a>
+                    <a href={"/report/" + item._id}>{item.name}</a>
+                    <a href={"/report/designer/" + item._id}>编辑</a>
                 </div>
             );
         }, this);

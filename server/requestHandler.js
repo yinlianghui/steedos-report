@@ -7,9 +7,12 @@ import routes from '../src/routes';
 import { matchRoutes } from 'react-router-config';
 
 export default async (req, res, next) => {
+    console.log("req.url============", req.url);
     if (req.url.startsWith('/static/') || req.url.startsWith('/assets/') || req.url.startsWith('/favicon.ico')) {
         return next()
     }
+    const rootUrl = process.env.REPORT_ROOT_URL;
+    console.log("req.url====124===rootUrl=====", rootUrl);
 
     const loadBranchData = async (branch) => {
         const promises = branch.map(({ route, match }) => {
@@ -22,7 +25,6 @@ export default async (req, res, next) => {
     // useful on the server for preloading data
     const branch = matchRoutes(routes, req.url);
     let data = await loadBranchData(branch);
-    console.log("branch=====", branch);
 
     const context = { data };
     const frontComponents = renderToString(
@@ -45,15 +47,14 @@ export default async (req, res, next) => {
         let isReport = !!reportBranch;
         let reportHeadTags = "";
         let reportScriptTags = "";
-        console.log("req.url========", req.url)
         if (isReport){
             reportHeadTags = `
-                <link href="/assets/stimulsoft-report/css/stimulsoft.viewer.office2013.whiteblue.css" rel="stylesheet">
-                <link href="/assets/stimulsoft-report/css/stimulsoft.designer.office2013.whiteblue.css" rel="stylesheet">
-                <script src="/assets/stimulsoft-report/js/stimulsoft.reports.js" type="text/javascript"></script>
-                <script src="/assets/stimulsoft-report/js/stimulsoft.dashboards.js" type="text/javascript"></script>
-                <script src="/assets/stimulsoft-report/js/stimulsoft.viewer.js" type="text/javascript"></script>
-                <script src="/assets/stimulsoft-report/js/stimulsoft.designer.js" type="text/javascript"></script>
+                <link href="${rootUrl}/assets/stimulsoft-report/css/stimulsoft.viewer.office2013.whiteblue.css" rel="stylesheet">
+                <link href="${rootUrl}/assets/stimulsoft-report/css/stimulsoft.designer.office2013.whiteblue.css" rel="stylesheet">
+                <script src="${rootUrl}/assets/stimulsoft-report/js/stimulsoft.reports.js" type="text/javascript"></script>
+                <script src="${rootUrl}/assets/stimulsoft-report/js/stimulsoft.dashboards.js" type="text/javascript"></script>
+                <script src="${rootUrl}/assets/stimulsoft-report/js/stimulsoft.viewer.js" type="text/javascript"></script>
+                <script src="${rootUrl}/assets/stimulsoft-report/js/stimulsoft.designer.js" type="text/javascript"></script>
             `;
             reportScriptTags = `
                 <script type="text/javascript">
@@ -62,13 +63,13 @@ export default async (req, res, next) => {
                     let designer = new window.Stimulsoft.Designer.StiDesigner(options, 'StiDesigner', false);
                     let report = new window.Stimulsoft.Report.StiReport();
                     let reportId = "contracts";
-                    report.loadFile("/api/report/mrt/" + reportId);
+                    report.loadFile("${rootUrl}/api/report/mrt/" + reportId);
                     designer.report = report;
                     designer.renderHtml("report-designer");
                     designer.onSaveReport = async function (args) {
                         // 保存报表模板
                         let jsonReport = args.report.saveToJsonString();
-                        let response = await fetch("/api/report/mrt/" + reportId, {
+                        let response = await fetch("${rootUrl}/api/report/mrt/" + reportId, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
@@ -92,7 +93,7 @@ export default async (req, res, next) => {
                     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
                     <meta name="theme-color" content="#000000">
                     <title>Steedos Report</title>
-                    <link rel="stylesheet" type="text/css" href="${buildPath.files["main.css"]}">
+                    <link rel="stylesheet" type="text/css" href="${rootUrl}${buildPath.files["main.css"]}">
                     ${reportHeadTags}
                 </head>
                 <body>
@@ -100,7 +101,7 @@ export default async (req, res, next) => {
                     You need to enable JavaScript to run this app.
                     </noscript>
                     <div id="root">${frontComponents}</div>
-                    <script src="${buildPath.files['main.js']}"></script>
+                    <script src="${rootUrl}${buildPath.files['main.js']}"></script>
                     ${reportScriptTags}
                 </body>
             </html>`

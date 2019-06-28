@@ -110,11 +110,13 @@ const convertFieldType = (tempField)=> {
     }
 }
 
-const getDatabases = (report)=> {
+const getDatabases = (report) => {
     if (!report) {
         return {};
     }
-    let dataUrl = `/api/report/data/${report._id}`;
+    const rootUrl = process.env.REPORT_ROOT_URL;
+    console.log("=======getDatabases========rootUrl=======", rootUrl);
+    let dataUrl = `${rootUrl}/api/report/data/${report._id}`;
     return {
         "0": {
             "Ident": "StiJsonDatabase",
