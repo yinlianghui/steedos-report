@@ -12,9 +12,6 @@ let reporter = {
     if (report.graphql) {
       let proxy = packageJSON.proxy ? packageJSON.proxy : "";
       let url = `${proxy}/graphql/default`;
-      // let dataResult = await request("http://localhost:3200/graphql/default/", report.graphql);
-      console.log("getData====url===", url);
-      console.log("getData====report.graphql===", report.graphql);
       let dataResult = await request(url, report.graphql);
       let items = dataResult[`${report.object_name}`];
       if (items && items.length) {

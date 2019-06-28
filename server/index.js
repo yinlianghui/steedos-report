@@ -41,7 +41,6 @@ const objectql = require("@steedos/objectql");
 const port = 3200;
 const rootUrl = "/api-v2/report";
 process.env.PORT = port;
-process.env.REPORT_ROOT_URL = rootUrl;
 
 let stimulsoftAssets = path.join(path.dirname(require.resolve("@steedos/stimulsoft-report")), "assets");
 let objectsDir = path.resolve('./objects')

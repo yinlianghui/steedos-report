@@ -114,8 +114,7 @@ const getDatabases = (report) => {
     if (!report) {
         return {};
     }
-    const rootUrl = process.env.REPORT_ROOT_URL;
-    console.log("=======getDatabases========rootUrl=======", rootUrl);
+    const rootUrl = "/api-v2/report";
     let dataUrl = `${rootUrl}/data/${report._id}`;
     return {
         "0": {

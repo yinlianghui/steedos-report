@@ -7,12 +7,10 @@ import routes from '../src/routes';
 import { matchRoutes } from 'react-router-config';
 
 export default async (req, res, next) => {
-    console.log("req.url============", req.url);
     if (req.url.startsWith('/static/') || req.url.startsWith('/assets/') || req.url.startsWith('/favicon.ico')) {
         return next()
     }
-    const rootUrl = process.env.REPORT_ROOT_URL;
-    console.log("req.url====124===rootUrl=====", rootUrl);
+    const rootUrl = "/api-v2/report";
 
     const loadBranchData = async (branch) => {
         const promises = branch.map(({ route, match }) => {
